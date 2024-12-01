@@ -53,7 +53,7 @@ The **top-level module** (`Digital_Dice`) integrates this `Dice_Roller` module, 
 ---
 
 ## **Constraints File**
-### **Basys-3-Master.xdc **
+### **Basys-3-Master.xdc**
 ```vhdl
 ## Clock signal
 set_property -dict { PACKAGE_PIN W5   IOSTANDARD LVCMOS33 } [get_ports clk]
