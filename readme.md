@@ -1,11 +1,13 @@
 
+---
+
 # **Digital Dice Roller on BASYS 3 FPGA**
 
 ## **Project Overview**
-This project implements a digital dice roller using VHDL on the BASYS 3 FPGA. The design features:
-- A single dice roller with values ranging from 1 to 6.
+This project implements a **digital dice roller** with two dice using VHDL on the BASYS 3 FPGA. The design features:
+- Two independent dice rollers, each generating values from 1 to 6.
 - User-controlled rolling functionality via switches.
-- Reset functionality to reset the dice to its initial state.
+- Reset functionality to reset the dice to their initial states.
 - Modular design utilizing an **internal module** (`Dice_Roller`) for dice rolling logic.
 - User I/O components such as 7-segment displays, switches, and LEDs.
 
@@ -16,10 +18,11 @@ The project adheres to the following requirements:
 1. **Synchronous Circuit**: Implements clock-driven processes for dice rolling.
 2. **Internal Module**: The `Dice_Roller` module encapsulates the dice rolling logic.
 3. **User I/O**:
-   - Switch for rolling the dice.
-   - LED to indicate when the dice is rolling.
-   - 7-segment display to display the dice value.
-   - Reset switch to reset the state of the dice.
+   - A switch for rolling the dice (`roll`).
+   - A switch to enable rolling of the second dice (`double_roll`).
+   - LED to indicate when the dice are rolling.
+   - 7-segment displays to display the values of the dice.
+   - Reset switch to reset both dice to their initial states.
 
 ---
 
@@ -29,15 +32,31 @@ The project adheres to the following requirements:
 The `Dice_Roller` module:
 1. Generates dice values (`1` to `6`) using a counter.
 2. Uses a clock divider to slow down the rolling for better visibility on the 7-segment display.
-3. Handles user input (`roll` switch) to start and stop the rolling.
+3. Handles user input (`roll` and `double_roll` switches) to control the rolling of each dice.
 
-The **top-level module** (`Digital_Dice`) integrates this `Dice_Roller` module, providing the interface for 7-segment display control, reset functionality, and LED indication.
+The **top-level module** (`Digital_Dice`) integrates this `Dice_Roller` module twice, providing the interface for 7-segment display control, reset functionality, and LED indication.
 
 ### **Design Choices**
 - **Clock Divider**: Slows down the dice rolling speed to make the output visually readable.
 - **Internal Module**: Encapsulation of dice logic in `Dice_Roller` promotes modularity and reusability.
+- **Multiplexing**: Alternates between displaying the two dice on shared 7-segment control lines.
 - **7-Segment Display Decoder**: Maps the binary dice values to corresponding 7-segment patterns for intuitive display.
-- **LED Indicator**: Provides feedback on whether the dice is rolling.
+- **LED Indicator**: Provides feedback on whether the dice are rolling.
+
+---
+
+## **User I/O**
+1. **Switches**:
+   - **`roll`**: Starts the rolling of both dice.
+   - **`double_roll`**: Enables the rolling of the second dice in addition to the first.
+   - **`reset`**: Resets both dice to their initial states (`1`).
+
+2. **LED**:
+   - Lights up when rolling is active (when `roll` is toggled on).
+
+3. **7-Segment Display**:
+   - Displays the value of the first dice on the first digit.
+   - Displays the value of the second dice on the second digit (when `double_roll` is active).
 
 ---
 
@@ -61,6 +80,7 @@ set_property -dict { PACKAGE_PIN W5   IOSTANDARD LVCMOS33 } [get_ports clk]
 ## Switches
 set_property -dict { PACKAGE_PIN V17   IOSTANDARD LVCMOS33 } [get_ports reset]
 set_property -dict { PACKAGE_PIN V16   IOSTANDARD LVCMOS33 } [get_ports roll]
+set_property -dict { PACKAGE_PIN W18   IOSTANDARD LVCMOS33 } [get_ports double_roll]
 
 ## LEDs
 set_property -dict { PACKAGE_PIN E19   IOSTANDARD LVCMOS33 } [get_ports roll_LED]
@@ -102,13 +122,16 @@ set_property CFGBVS VCCO [current_design]
    - Use the generated bitstream file to program the BASYS 3 FPGA.
 
 4. **Control the Dice**:
-   - Use the `roll` switch to start and stop the dice rolling.
-   - Use the `reset` switch to reset the dice value to 1.
-   - Observe the dice value on the 7-segment display and rolling indication on the LED.
+   - Use the `roll` switch to start the rolling.
+   - Use the `double_roll` switch to enable or disable the second dice.
+   - Use the `reset` switch to reset both dice values to `1`.
+   - Observe the dice values on the 7-segment display and rolling indication on the LED.
 
 ---
 
 ## **Simulation**
 For simulation:
-- Test the functionality of the `Dice_Roller` module in isolation.
-- Verify the integration of `Dice_Roller` within `Digital_Dice`.
+- Test the functionality of the `Dice_Roller` module for both dice independently.
+- Verify the integration of two `Dice_Roller` modules within `Digital_Dice` and the multiplexing logic.
+
+---
